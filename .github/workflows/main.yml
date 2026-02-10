@@ -1,0 +1,39 @@
+name: Pull Other Repo And Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1️⃣ checkout 当前仓库
+    - name: Checkout current repo
+      uses: actions/checkout@v4
+
+    # 2️⃣ checkout 另一个仓库
+    - name: Checkout source repo
+      uses: actions/checkout@v4
+      with:
+        repository: Azure/Azure-Sentinel
+        path: source_repo
+        token: ${{ secrets.GITHUB_TOKEN }}
+        # 如果是 private repo → 用 PAT
+
+    # 3️⃣ 打包指定目录
+    - name: Zip target directory
+      run: |
+        cd source_repo
+        zip -r ../artifact.zip Solutions
+
+    # 4️⃣ 发布到 Release
+    - name: Upload Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: artifact.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
