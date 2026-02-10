@@ -29,11 +29,16 @@ jobs:
       run: |
         cd source_repo
         zip -r ../artifact.zip Solutions
+    - name: Generate tag
+      id: tag
+      run: |
+        echo "tag=v$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_OUTPUT
 
     # 4️⃣ 发布到 Release
     - name: Upload Release
       uses: softprops/action-gh-release@v2
       with:
         files: artifact.zip
+        tag_name: ${{ steps.tag.outputs.tag }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
