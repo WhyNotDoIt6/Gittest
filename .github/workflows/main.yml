@@ -31,7 +31,7 @@ jobs:
     - name: Zip target directory
       run: |
         cd source_repo
-        zip -r ../artifact.zip Solutions
+        zip -r ../artifact.zip Solutions -i '*.yaml'
     - name: Generate tag
       id: tag
       run: |
